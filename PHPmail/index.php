@@ -37,7 +37,7 @@ setInterval(reload, 5000)
 
 <button name="send" id="send" style="width:150px;height:50px;left:0px">Send your message!</button>
 </form>
-<br></br>This chat is still in development. Expect it to be laggy and have sudden changes. Many parts are still in testing.
+<br></br>This is the official stable version of PHPmail. To visit the beta-testing version, go to email.aengine.repl.co
 </div>
 
 
@@ -60,13 +60,9 @@ if (divstatus == 'true') {
 var psk;
 psk = document.getElementById("psk").value;
 function login() {
-  if (psk == "LLIM") {
     localStorage.setItem("divstatus", "true");
     document.getElementById("current").style.display = "none";
     document.getElementById("email").style.display = "block";
-  } else {
-    alert("Incorrect Pre-Shared Key: " + psk);
-  }
 }
 </script>
   </div>
