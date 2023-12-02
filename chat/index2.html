@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html style="overflow:hidden;padding:0px">
+  <style>
+    p {
+      margin: 15px;
+      padding: 0;
+    }
+    @keyframes rainbow {
+      from {
+        color: rgb(155,0,0);
+      }
+      20% {
+        color: rgb(155,155,0);
+      }
+      40% {
+        color: rgb(0,155,0);
+      }
+      60% {
+        color: rgb(0,155,155);
+      }
+      80% {
+        color: rgb(155,0,155);
+      }
+      100% {
+        color: rgb(155,0,0);
+      }
+    }
+  </style>
+  <body style='position:absolute;top:0px;left:0px;padding:0px;margin: 0px'>
+    <center>
+      <div style='top:0px;left:0px;width:380px;height:20px;border: 1px solid rgb(150,150,150);overflow:hidden;text-align: center;padding: 10px;'>
+        <span style="animation: rainbow 6s linear 0s infinite"><b><ins>Chat</ins></b></span><span id='number'> - Loading...</span>
+      </div>
+      <div id='box' style='word-wrap: break-word;top:0px;left:0px;width:380px;height:375px;border: 1px solid rgb(150,150,150);overflow-x:scroll;scroll-behavior: smooth;text-align: justify;padding: 10px;'>
+        <p><ins style="color:rgb(0,200,200)">Welcome to the IFWI/A-ENGINE official chat!</ins></p>
+      </div>
+      <input autocomplete='off' spellcheck='false' autocorrect='off' onkeydown="setInterval(Check,0)" id='name' placeholder='Enter your name here!' style='width:143px;height:25px;left:0px'></input><input autocomplete='off' spellcheck='false' autocorrect='off' disabled onkeydown="if(event.code=='Enter'&&document.getElementById('input').value.length>0){document.getElementById('name').disabled=true;Send(document.getElementById('input'))}" id='input' placeholder='Press "Enter" to send a message!' style='width:243px;height:25px;left:0px'></input>
+    </center>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var before = document.getElementById('before')
+      var update = 0
+      var l = document.getElementById('name')
+      document.getElementById('input').focus();
+      const socket = io()
+      function Message(message) {
+        let k = document.createElement('P')
+        k.innerHTML = message
+        document.getElementById('box').append(k)
+        k.scrollIntoView()
+      }
+      function Message2(message) {
+        let k = document.createElement('P')
+        k.innerHTML = message
+        document.getElementById('box').append(k)
+        document.getElementById('before').after(k)
+      }
+      socket.on('disconnect', function() {
+        Message('<b style="color:rgb(255,0,0)">Socket Closed.</b>')
+      });
+      socket.on('connect', function() {
+        document.getElementById("box").textContent = ''
+        Message('<ins style="color:rgb(0,200,200)">Welcome to the chat!</ins>')
+        Message('<b style="color:rgb(0,175,0)">Connection Established.</b>\n')
+        let k = document.createElement('BUTTON')
+        k.id = "before"
+        k.innerHTML = "Load More"
+        k.style = "width:100%;height;25px"
+        k.onclick = function(){
+          document.getElementById('before').disabled=true
+          socket.emit('load',update)
+          setTimeout(function(){document.getElementById('before').disabled=false},1000)
+        }
+        document.getElementById('box').append(k)
+      });
+      socket.on('chat', function(e) {
+        Message(e)
+      });
+      socket.on('start', function(e) {
+        update = e[0]
+        e = e[1]
+        var l = e.length
+        for(i=0;i<l;i++) {
+          Message(e[i])
+        }
+      });
+      socket.on('update', function(e) {
+        document.getElementById('box').style.scrollBehavior = 'auto'
+        document.getElementById('box').scrollBy(0,100)
+        update -= e.length
+        for(i=e.length-1;i>=0;i--) {
+          Message2(e[i])
+        }
+        document.getElementById('box').scrollBy(0,-100)
+        document.getElementById('box').style.scrollBehavior = 'smooth'
+      });
+      socket.on('number', function(e) {
+        document.getElementById('number').innerHTML=' - '+e+' connected'
+      });
+      socket.on('connect_error', function(e) {
+        setTimeout(function(){location.reload()},1000)
+      });
+      function CheckFor(t,c) {
+        return (t.length>c.length&&t[c.length+1]==' '&&t.slice(1,c.length+1)==c)
+      }
+      function Send(c) {
+        var text = c.value
+        var prefix = ''
+        var private = false
+        while(text[0]=='/') {
+          if(CheckFor(text,'rainbow')) {prefix='<span style="animation: rainbow 6s linear 0s infinite">'+prefix;text=text.slice(9)+'</span>'}
+          else if(CheckFor(text,'bold')) {prefix='<b>'+prefix;text=text.slice(6)+'</b>'}
+          else if(CheckFor(text,'underline')) {prefix='<ins>'+prefix;text=text.slice(11)+'</ins>'}
+          else if(CheckFor(text,'strikethrough')) {prefix='<del>'+prefix;text=text.slice(11)+'</del>'}
+          else if(CheckFor(text,'temporary')) {private=true;text=text.slice(11)}
+          else {break}
+        }
+        if(private) {
+          socket.emit('confidential', '[temporary] <ins><b>'+l.value+'</b></ins>:<br>'+prefix+text)
+        }
+        else {
+          socket.emit('message', '<ins><b>'+l.value+'</b></ins>:<br>'+prefix+text)
+        }
+        c.value = ""
+        c.disabled = true
+        setTimeout(function(){c.disabled=false;document.getElementById('input').focus();},1000)
+      }
+      function Check() {
+        if(document.getElementById('name').value.length<=0) {document.getElementById('input').disabled=true}
+        else {document.getElementById('input').disabled=false}
+      }
+    </script>
+  </body>
+</html>
