@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <b><font size="+3">IMPORTANT NOTE: if you are not clicking on a link that is a subdomain of headquarters.aengine, use ALT+N to get back to the page.</font></b>
+  <script>
+  window.addEventListener('keydown', function(e) {
+    if (e.altKey == true && e.keyCode == 78) {
+      //top.location = window.location;
+      var iframe = document.getElementById("iframe");
+      iframe.removeChild(iframe);
+    }
+  }
+</script>
+  <br></br>
+  <button onclick="iframe()"><font size="+2">iFrame Any Site</font></a></button>
+  <br></br>
+  <button onclick="proxy()"><font size="+2">iFrame Proxy</font></a></button>
+  <br></br>
+  <button onclick="chat()"><font size="+2">Official A-ENGINE chatroom</font></a></button>
+  <br></br>
+  <button onclick="v86()"><font size="+2">Load v86 Linux Emulator</font></a></button>
+  <script src="home.js"></script>
+  <script>
+   (function() {
+    if ( window !== window.parent ) {
+      // The page is in an iframe   
+} 
+else {     
+ var url = location.href
+    var urlObj = new window.URL(window.location.href);
+    win = window.open();
+    win.document.body.style.margin = "0";
+    win.document.body.style.height = "100vh";
+    var iframe = win.document.createElement("iframe");
+    iframe.style.border = "none";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.margin = "0";
+    iframe.referrerpolicy = "no-referrer";
+    iframe.allow = "fullscreen";
+    iframe.src = url.toString();
+    win.document.body.appendChild(iframe);
+    location.href = 'https://google.com'
+    window.close()
+    //var script = win.document.createElement("script");
+    //script.src = "https://3kh0.github.io/js/main.js";
+    //win.document.body.appendChild(script);
+  }
+})();
+  </script>
+</body>
+</html>
