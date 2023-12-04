@@ -1,4 +1,4 @@
-let solvingIntervalId;
+let solvingIntervalId; 
 let isAutoMode = false;
 let isSolving = false;
 let isTokenRunning = false;
